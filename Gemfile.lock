@@ -12,7 +12,10 @@ GEM
     diff-lcs (1.1.2)
     gherkin (2.4.1)
       json (>= 1.4.6)
+    gherkin (2.4.1-java)
+      json (>= 1.4.6)
     json (1.5.3)
+    json (1.5.3-java)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
     rake (0.8.7)
@@ -30,9 +33,11 @@ GEM
       ruby-debug-base (~> 0.10.4.0)
     ruby-debug-base (0.10.4)
       linecache (>= 0.3)
+    ruby-debug-base (0.10.4-java)
     term-ansicolor (1.0.5)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
