@@ -27,7 +27,7 @@ begin
     remove_const 'STDERR'
     const_set 'STDERR', params[1]
     remove_const 'STDOUT'
-    const_set 'STDOUT', params[1]
+    const_set 'STDOUT', params[2]
   end
   $stderr = STDERR
   $stdout = STDOUT
