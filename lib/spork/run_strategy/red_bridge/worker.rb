@@ -8,6 +8,7 @@ class Spork::RunStrategy::RedBridge::Worker
     @worker_go = Semaphore.new(0)
     @master_go = Semaphore.new(0)
     @params = [nil, nil, nil].to_java
+    @result_container = [nil].to_java
   end
 
   def preload
@@ -17,6 +18,7 @@ class Spork::RunStrategy::RedBridge::Worker
       @container.put("$worker_id", @worker_id)
       @container.put("framework_name", @framework_name)
       @container.put("params", @params)
+      @container.put("result_container", @result_container)
       @container.runScriptlet <<-EOS
         require 'rubygems'
         require 'spork'
@@ -52,13 +54,15 @@ class Spork::RunStrategy::RedBridge::Worker
           $stderr = STDERR
           $stdout = STDOUT
 
-          Spork.exec_each_run
           load framework.helper_file
-          framework.run_tests(params[0], STDERR, STDOUT)
+          Spork.exec_each_run
+          result_container[0] = framework.run_tests(params[0], STDERR, STDOUT)
+          Spork.exec_after_each_run
         rescue Exception => e
           $orig_stderr.puts e.message
           $orig_stderr.puts e.backtrace.join("\n")
           $orig_stderr.flush
+          @result_container[0] = 1 # Failure
         ensure
           worker_log 'Shutting down'
           master_go.release
@@ -77,5 +81,8 @@ class Spork::RunStrategy::RedBridge::Worker
     @params[2] = output_stream.to_java
     @worker_go.release
     @master_go.acquire
+
+    # Return the result as reported by the worker
+    @result_container[0]
   end
 end

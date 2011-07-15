@@ -27,14 +27,14 @@ class Spork::RunStrategy::RedBridge::Master < Spork::RunStrategy
   end
 
   def run(argv, error_stream, output_stream)
+    # Delegate to the first worker
     worker = @workers.shift
-    worker.run(argv, error_stream, output_stream)
+    result = worker.run(argv, error_stream, output_stream)
 
     # Add a new worker to replace the one we just used
     add_worker
 
-    # Success
-    0
+    result
   end
 
   def cleanup
