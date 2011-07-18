@@ -11,7 +11,7 @@ This behavior makes RubyMine's Spork integration really unhappy and, in my exper
 So, I set out to fix this as my project for the July 2011 LinkedIn Hackday.
 
 ## What's different?
-This fork provides a new run strategy based on RedBridge to be used with Spork is running under JRuby. This strategy uses RedBridge to run worker JRuby VM instances within the same JVM. The worker processes still must run `Spork.prefork`, but interlocks make sure that the master and the workers stay in sync.
+This fork provides a new run strategy based on RedBridge to be used when Spork is running under JRuby. This strategy uses RedBridge to run worker JRuby VM instances within the same JVM. The worker processes still must run `Spork.prefork`, but interlocks make sure that the master and the workers stay in sync.
 
 Because the workers are running within the same JVM as the Spork server, this approach should consume fewer resources than magazine strategy. The workers should also come online faster.
 
