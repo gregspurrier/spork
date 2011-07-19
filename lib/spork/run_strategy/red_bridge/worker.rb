@@ -1,9 +1,17 @@
-import java.util.concurrent.Semaphore
+require 'jruby'
+require 'java'
+
+import org.jruby.embed.ScriptingContainer
+import org.jruby.embed.LocalContextScope
 import org.jruby.embed.PathType
+import java.util.concurrent.Semaphore
 
 class Spork::RunStrategy::RedBridge::Worker
-  def initialize(container, worker_id, framework_name)
-    @container = container
+  def initialize(worker_id, framework_name)
+    @container = ScriptingContainer.new(LocalContextScope::SINGLETHREAD)
+    @container.set_environment(ENV)
+    @container.set_load_paths($LOAD_PATH)
+
     @worker_id = worker_id
     @framework_name
     @worker_go = Semaphore.new(0)
@@ -34,8 +42,8 @@ class Spork::RunStrategy::RedBridge::Worker
     @params[2] = output_stream.to_java
     @worker_go.release
     @master_go.acquire
+    @thread.join
 
-    # Return the result as reported by the worker
-    @result_container[0]
+    result = @result_container[0]
   end
 end

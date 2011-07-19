@@ -1,19 +1,7 @@
-require 'jruby'
-require 'java'
-
-import org.jruby.embed.ScriptingContainer
-import org.jruby.embed.LocalContextScope
-
 class Spork::RunStrategy::RedBridge::Master < Spork::RunStrategy
-  attr_reader :container
-
   def initialize(test_framework)
     super
     STDERR.puts 'Using JRuby RedBridge'
-    @container = ScriptingContainer.new(LocalContextScope::THREADSAFE)
-    @container.set_environment(ENV)
-    @container.set_load_paths($LOAD_PATH)
-
     @workers = []
     @next_worker_id = 1
     2.times { add_worker }
@@ -62,7 +50,7 @@ private
 
   # Add a new worker to the pool
   def add_worker
-    worker = Spork::RunStrategy::RedBridge::Worker.new(container, @next_worker_id, test_framework.short_name)
+    worker = Spork::RunStrategy::RedBridge::Worker.new(@next_worker_id, test_framework.short_name)
     @next_worker_id += 1
     worker.preload
     @workers << worker
